@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import Container from "react-bootstrap/Container";
+import { InfoCard } from "./components/cards/infoCard"
+import { NewContactForm } from "./components/forms/newContact/newContact";
+import { useContacts } from "./contexts/contactContext";
+import { useEffect } from "react";
+import { useModal } from "./contexts/modalContext";
+import { EditModal } from "./components/modal/editModal";
+import { ToastContainer } from "react-toastify";
+
 
 function App() {
+  const { getContacts } = useContacts()
+  const { show } = useModal()
+  const data = getContacts()
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        await getContacts()
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getData()
+  },)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container className="bg-primary pb-3 h-100">
+      <ToastContainer autoClose={2000}/>
+      {show && <EditModal/>}
+      <h2 className="text-center text-light pt-2">Lista de Contatos</h2>
+
+      <InfoCard list={data}/>
+
+      <NewContactForm/>
+   
+    </Container>
   );
 }
 
-export default App;
+export default App
